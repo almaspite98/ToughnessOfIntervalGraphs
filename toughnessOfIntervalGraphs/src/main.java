@@ -9,12 +9,12 @@ import java.util.Collections;
 import javax.swing.*;
 
 public class main {
-    public static int n = 10; //intervallumok száma
+    public static int n = 15; //intervallumok száma
     public static void main(String args[])
     {
         IntervalGraph ig=new IntervalGraph();
-        ig.inputGenerator(n); //auto generated input
-        //ig.readInGraph(); //manual input
+        //ig.inputGenerator(n); //auto generated input
+        ig.readInGraph(); //manual input
         //ig.makeZones(ig.vertices);
         ig.makeLanes();
 
@@ -25,11 +25,11 @@ public class main {
         testFrame.getContentPane().add(ig.linesComponent, BorderLayout.CENTER);
         testFrame.pack();
         testFrame.setVisible(true);
-        ig.makeAllComponents(ig.zones);
+        ig.allComponents=ig.makeAllComponents(ig.zones);
         //ig.readInPlr(ig.zones);
 
         //ig.makeComponentsOfComponenets();
-
+        //ig.makeComponentsOfComponenets();
         ig.plld(ig.zones.cliques.size());
     }
 

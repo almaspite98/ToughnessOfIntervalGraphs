@@ -1,7 +1,6 @@
 package DrawingTool;
 
 import lombok.AllArgsConstructor;
-
 import java.awt.*;
 
 @AllArgsConstructor

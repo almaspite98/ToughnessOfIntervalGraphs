@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="toughnessOfIntervalGraphs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/toughnessOfIntervalGraphs/lombok.jar!/" />
+      <root url="jar://$PROJECT_DIR$/toughnessOfIntervalGraphs/lombok-edge.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

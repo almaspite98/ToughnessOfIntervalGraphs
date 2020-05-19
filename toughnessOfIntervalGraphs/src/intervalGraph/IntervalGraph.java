@@ -13,7 +13,7 @@ import java.util.*;
 public class IntervalGraph {
     public LinesComponent linesComponent;
     public ArrayList<Vertex> vertices;
-    ArrayList<Component> allComponents;
+    public ArrayList<Component> allComponents;
     ArrayList<ComponentsOfComponent> allComponentsComponents;
     ArrayList<ArrayList<ArrayList<Integer>>> ciTable;
     //ArrayList[][] ciTable;
@@ -169,23 +169,28 @@ public class IntervalGraph {
         ArrayList<Component> components = new ArrayList<>();
         for (int l = 0; l < z.cliques.size(); l++) {
             for (int r = l; r < z.cliques.size(); r++) {
-                Component temp = makeComponent(l, r, z);
-                if (temp.componentVertices.isEmpty()) temp.mark = "empty";
-                else if (isComplete(temp.componentVertices)) temp.mark = "complete";
-                else if (isConnected(temp)) temp.mark = "noncomplete";
-                else temp.mark = "disconnected";
-                plr[l][r] = temp.mark;
+                Component c = makeComponent(l, r, z);
+                plr[l][r] = c.mark;
                 //System.out.println("plr: " + plr[l][r]);
-                components.add(temp);
-                System.out.println(components.get(components.size() - 1));
-                System.out.println(temp.componentVertices);
+                components.add(c);
+                //System.out.println(components.get(components.size() - 1));
+                System.out.println(c);
             }
         }
         //printOut2DArray(plr);
         return components;
     }
 
-    public Component[][] makeComponenetsArray(Zones z) {
+
+
+    public String markComponents(Component c){
+        if (c.componentVertices.isEmpty()) return "empty";
+        else if (isComplete(c)) return "complete";
+        else if (isConnected(c)) return "noncomplete";
+        else return "disconnected";
+    }
+
+    /*public Component[][] makeComponenetsArray(Zones z) {
         Component[][] plrArray = new Component[z.cliques.size()][z.cliques.size()];
         //ArrayList<Component> components = new ArrayList<>();
         for (int l = 0; l < z.cliques.size(); l++) {
@@ -200,7 +205,7 @@ public class IntervalGraph {
         }
         //printOut2DArray(plr);
         return plrArray;
-    }
+    }*/
 
     public void printOut2DArray(String[][] x) {
         for (String[] strings : x) {
@@ -247,6 +252,13 @@ public class IntervalGraph {
         return true;
     }
 
+    public boolean isComplete(Component c) {
+        for(Zone z:c.componentZones.zones){
+            if(z.n==c.componentVertices.size()) return true;
+        }
+        return false;
+    }
+
     public boolean isNoncomplete(Component c) {
         return c.mark.equals("noncomplete");
     }
@@ -271,7 +283,9 @@ public class IntervalGraph {
         if (l > 0) union.removeAll(z.cliques.get(l - 1).zoneVertices);
         if (r < z.cliques.size() - 1) union.removeAll(z.cliques.get(r + 1).zoneVertices);
         Zones componentZones = new Zones(makeNumberLine(union), union);
-        return new Component(union, componentZones, l, r, "null");
+        Component newComponent=new Component(union, componentZones, l, r, "null");
+        newComponent.mark=markComponents(newComponent);
+        return newComponent;
     }
 
     private void drawComponent(Component component) {
@@ -287,20 +301,6 @@ public class IntervalGraph {
     }
 
     public ArrayList<ComponentsOfComponent> makeComponentsOfComponenets() {
-        //ArrayList<ArrayList<Component>> componentsOfComponents=new ArrayList<>();
-        /*ArrayList<ComponentsOfComponent> componentsOfComponents=new ArrayList<>();
-        for(Component c:makeAllComponents(zones)){
-            ComponentsOfComponent componentsOfComponent=new ComponentsOfComponent(c,makeAllComponents(c.componentZones));
-            componentsOfComponents.add(componentsOfComponent);
-        }
-        printOutComponentsOfComponents(componentsOfComponents);
-        for(ComponentsOfComponent cc: componentsOfComponents){
-            if(cc.component.mark.equals("noncomplete")){
-                //separator kiszámolása: l<=p<=r-1
-                //mark minimal, ha csak 1 klikkje van a sub componensnek
-
-            }
-        }*/
         // P(l,r) metszet Sp -nek a componenseit kell kiszámolni????? ja..
         //noncomplete components
         //separator kiszámolása: l<=p<=r-1
@@ -308,13 +308,11 @@ public class IntervalGraph {
         //összefüggőség vizsgálata
         int min=0;
         boolean elso=true;
-        ArrayList<Component> allComponents=makeAllComponents(zones);
+        //allComponents=makeAllComponents(zones);
         ArrayList<ComponentsOfComponent> ccArray=new ArrayList<>();
         for(int i=0;i<allComponents.size();i++){
             Component c=allComponents.get(i);
-            if(c.mark.equals("noncomplete")){
-                //System.out.println("Sp metszet Plr: ");
-                //System.out.println("Sp metszet Plr: ");
+            if(!c.mark.equals("complete")){
                 for(int p=c.l;p<c.r;p++){
                     ArrayList<Vertex> separator = new ArrayList<>(zones.separators.get(p).zoneVertices);
                     ArrayList<Vertex> temp = new ArrayList<>(c.componentVertices);
@@ -328,9 +326,7 @@ public class IntervalGraph {
                         //Ha minimális akkor számold ki a Plr\Sp komponenseit
                         // (p,l,r) -> (l1,r1),...
                         mark="minimal";
-
                         // |Sp metszet Plr| = temp számossága
-
                         //összefüggőség = min{|Sp metszet Plr| : (p,l,r) marked minimal}
                         if(elso){
                             min=temp.size();
@@ -347,32 +343,40 @@ public class IntervalGraph {
                     newComponentVertices.removeAll(separator);
                     Zones newComponentZones=makeZones(newComponentVertices);
                     Component newComponent=new Component(newComponentVertices,newComponentZones,c.l,c.r,mark);
-                    ComponentsOfComponent cc=new ComponentsOfComponent(temp.size(),p,mark,c,newComponent,makeAllComponents(newComponentZones));
+                    System.out.println("c: "+c+" Sp: "+p);
+                    ComponentsOfComponent cc=new ComponentsOfComponent(temp.size(),p,mark,c,newComponent,makeAllDisjunctComponents(newComponentZones.zones,allComponents));
                     ccArray.add(cc);
                 }
                 //System.out.println();
             }
-
         }
-        printOutComponentsOfComponents(ccArray);
+        //printOutComponentsOfComponents(ccArray);
         //allComponentsComponents=ccArray;
         return ccArray;
+    }
+
+    public ArrayList<Component> makeAllDisjunctComponents(ArrayList<Zone> zones,ArrayList<Component> allComponents){
+        ArrayList<Component> components=new ArrayList<>();
+        ArrayList<Zone> temp=new ArrayList<>();
+        for(Zone z:zones){
+            if(z.n!=0){
+                temp.add(z);
+            }else{
+                Component c=findComponentByZones(temp,allComponents);
+                components.add(c);
+                System.out.println("disjunct comp.: "+c);
+                temp.clear();
+            }
+        }
+        Component c=findComponentByZones(temp,allComponents);
+        components.add(c);
+        System.out.println("disjunct comp.: "+c);
+        return components;
     }
 
     public int completeComponentCi(Component c,int i){
         if(i==c.componentVertices.size()) return 0;
         else return 1;
-    }
-
-
-    public void computeCis(Zones z){
-        for(int d=0,l=0;d<z.cliques.size() && l<z.cliques.size()-d;d++,l++){ //TODO: határérték vizsgálat
-            //check whether (l,l+d) is noncomplete
-            //ci(G[P(l,l+d)] for every i = X(P(l,l+d)) ... |P(l,l+d|-2 -ig
-            //eq. 4
-            // ci(G[P(l,l+d])=0 for i=|P(l,l+d)| and ci(G[P(l,l+d])=1 for i < X(P(l,l+d)) || i = |P(l,l+d)|-1
-            //eq. 4: ci(G[P(l,r)])= max Sum (1->k) crj(G[Pj])
-        }
     }
 
     public void printOutComponentsOfComponents(ArrayList<ComponentsOfComponent> componentsOfComponents){
@@ -386,22 +390,20 @@ public class IntervalGraph {
         else return -100.0; //Teszt ! kasztolás
     }
 
-    public void everyRjCombination(int i, int sizeOfSeparator,int numOfConnectedComponents){
-        //create all possible (r1,r2,....,rk) integer vectors that there sum is i-|S|
-        //ignore that contain the same numbers
-        ArrayList<ArrayList<Integer>> array=new ArrayList<>(); //max k oszlop, és rj<=n
-    }
-
     public int connectednessOfComponent(Component c){
-        int x=0;
+        int min=0;
         boolean elso=true;
         for(Zone z: c.componentZones.zones){
-            if(elso) x=z.n;
+            if(elso){
+                min=z.n;
+                elso=false;
+            }
             else{
-                if(z.n<x) x=z.n;
+                if(z.n<min) min=z.n;
             }
         }
-        return x;
+        //System.out.println("min: "+min);
+        return min;
     }
 
     public ComponentsOfComponent findComponentsOfComponent(ArrayList<ComponentsOfComponent> ccArray,int p,int l,int r){
@@ -416,6 +418,14 @@ public class IntervalGraph {
             if(c.l==l && c.r==r) return c;
         }
         System.out.println("("+l+","+r+") nem található!");
+        return null;
+    }
+
+    public Component findComponentByZones(ArrayList<Zone> zones,ArrayList<Component> components){
+        for(Component c:components){
+            if(c.componentZones.zones.equals(zones)) return c;
+        }
+        System.out.println("zones: "+zones+" nem található!");
         return null;
     }
 
@@ -443,16 +453,21 @@ public class IntervalGraph {
     public int lemma(ArrayList<Integer> LrMinusOne, ArrayList<Integer> Hr,int i){
         int max=0;
         int[][] pqs=divideI(i);
-        for(int p=0;p<i+1;p++){
-            for(int q=0;q<i+1;q++){
-                if(pqs[p][q]==1 && LrMinusOne.get(p)+Hr.get(q)>max)max=LrMinusOne.get(p)+Hr.get(q);
+        for(int p=0;p<=i;p++){
+            for(int q=0;q<=i;q++){
+                if(q<Hr.size() && p<LrMinusOne.size()){
+                    System.out.println("pqs[p][q]==1: "+(pqs[p][q]==1));
+                    System.out.println("LrMinusOne.get(p): "+LrMinusOne.get(p));
+                    System.out.println("Hr.get(q): "+Hr.get(q));
+                    if(pqs[p][q]==1 && (LrMinusOne.get(p)+Hr.get(q))>max) max=LrMinusOne.get(p)+Hr.get(q); //Hr-t túlindexeli
+                }
             }
         }
-        LrMinusOne.add(max);
+        //LrMinusOne.add(max);
         return max;
      }
 
-     public ArrayList<Integer> makeHjforSmallPieces(Component c){
+     /*public ArrayList<Integer> makeHjforSmallPieces(Component c){
         ArrayList<Integer> H=new ArrayList<>();
         for(int i=0;i<=c.componentVertices.size();i++){
             if(i<connectednessOfComponent(c)) H.add(1);
@@ -460,7 +475,7 @@ public class IntervalGraph {
             else H.add(2);
         }
         return H;
-     }
+     }*/
 
      public ComponentsOfComponent findComponentsOfComponent(Component c,int p){
         for(ComponentsOfComponent cc:allComponentsComponents){
@@ -510,47 +525,66 @@ public class IntervalGraph {
 
     public int ComponentCi(int l,int r,int i){ //TODO határértékek
         Component c=findComponent(l,r,allComponents);
+        System.out.println("c: "+c);
+        System.out.println("i: "+i);
         int ci=0;
-        for(int p=0;p<c.componentZones.separators.size();p++){
+        for(int p=l;p<r;p++){
+            System.out.println("p: "+p);
             ComponentsOfComponent cc=findComponentsOfComponent(c,p);
-            // B -> ci(Pj)
-            ArrayList<ArrayList<Integer>> HLists=new ArrayList<>();
-            for(int j=0;j<cc.componentsOfComponent.size();j++){
-                Component Pj=cc.componentsOfComponent.get(j);
-                ArrayList<Integer> Hj=new ArrayList<>();
-                for(int m=0;m<Pj.componentVertices.size();m++){
-                    int ciPj=ciTable.get(Pj.l).get(Pj.r).get(m);
-                    Hj.add(ciPj);
+            System.out.println("cc null: "+(cc==null));
+            System.out.println("cc: "+(cc.componentsOfComponent==null));
+            System.out.println("cc.size: "+cc.componentsOfComponent.size());
+            if(i>=cc.i) {
+                ArrayList<ArrayList<Integer>> HLists = new ArrayList<>();
+                for (int j = 0; j < cc.componentsOfComponent.size(); j++) {
+                    Component Pj = cc.componentsOfComponent.get(j);
+                    ArrayList<Integer> Hj = new ArrayList<>();
+                    printOutCiTable();
+                    System.out.println("Pj: " + Pj);
+                    for (int m = 0; m <= Pj.componentVertices.size(); m++) { //Pj.componentVertices.size()
+                        System.out.println("ciTable.size(): " + ciTable.size());
+                        System.out.println("ciTable.get(Pj.l).size(): " + ciTable.get(Pj.l).size());
+                        System.out.println("ciTable.get(Pj.l).get(Pj.r).size(): " + ciTable.get(Pj.l).get(Pj.r).size());
+                        System.out.println("Pj " + Pj);
+                        System.out.println("Pj c" + m + ": " + ciTable.get(Pj.l).get(Pj.r).get(m));
+                        int ciPj = ciTable.get(Pj.l).get(Pj.r).get(m);
+                        System.out.println("Pj c" + m + ": " + ciPj);
+                        Hj.add(ciPj);
+                    }
+                    HLists.add(Hj);
                 }
-                HLists.add(Hj);
-            }
-            ArrayList<ArrayList<Integer>> LLists=new ArrayList<>();
-            LLists.add(HLists.get(0));
-            for(int t=1;t<cc.componentsOfComponent.size();t++){
-                ArrayList<Integer> L=new ArrayList<>();
-                for(int o=0;o<cc.newComponent.componentVertices.size();o++){
-                    L.add(lemma(LLists.get(t-1),HLists.get(t),o));
+                ArrayList<ArrayList<Integer>> LLists = new ArrayList<>();
+                LLists.add(HLists.get(0));
+                for (int t = 1; t < cc.componentsOfComponent.size(); t++) {
+                    ArrayList<Integer> L = new ArrayList<>();
+                    for (int o = 0; o <= c.componentVertices.size(); o++) {
+                        L.add(lemma(LLists.get(t - 1), HLists.get(t), o));
+                    }
+                    System.out.println("L" + t + " " + L);
+                    LLists.add(L);
                 }
-                LLists.add(L);
+                int k=cc.componentsOfComponent.size()-1;
+                if(LLists.get(k).get(i-cc.i)>ci) ci=LLists.get(k).get(i-cc.i); //i-separator size() ??
+            }else {
+                System.out.println("i kisebb mint sp mérete");
             }
-            if(LLists.get(p).get(i)>ci) ci=LLists.get(p).get(i);
-            // 4.5
-            //4. equation
-            // max(p) Lk[i]
         }
+        System.out.println("CI: "+ci);
         return ci;
     }
+
     public void makeCiTableForCompleteComponents(int t){
         for(int l=0;l<t;l++){
             for(int r=l;r<t;r++){
                 ArrayList<Integer> cis=new ArrayList<>();
                 Component c=findComponent(l,r,allComponents);
+                System.out.println("(makeCiTableForCompleteComponents)c:"+c);
                 if(c.mark.equals("complete")){
                     for(int i=0;i<=c.componentVertices.size();i++){
                         cis.add(completeComponentCi(c,i));
                     }
                     ciTable.get(l).get(r).addAll(cis);
-                    System.out.println("CITABLE: "+l+","+r+": "+ciTable.get(l).get(r));
+                    System.out.println("CITABLE(Complete): "+l+","+r+": "+ciTable.get(l).get(r));
                 }
             }
         }
@@ -564,38 +598,44 @@ public class IntervalGraph {
                 ciTable.get(i).add(new ArrayList<>(t));
             }
         }
-        allComponents=makeAllComponents(zones);
+        //allComponents=makeAllComponents(zones);
         allComponentsComponents=makeComponentsOfComponenets();
         makeCiTableForCompleteComponents(t);
-        for(int d=1;d<t;d++){
+        for(int d=0;d<t;d++){
             for(int l=0;l<t-d;l++){
                 Component plr=findComponent(l,l+d,allComponents);
                 ArrayList<Integer> cis=new ArrayList<>();
-                if(isNoncomplete(plr)){
+                if(!isComplete(plr)){
+                    System.out.println(plr);
                     //compute ci-s X->n-2-ig
                     //ArrayList<Integer> cis=new ArrayList<>();//new int[plr.componentVertices.size()+1];
-                    for(int i=0;i<=plr.componentVertices.size()+1;i++) cis.add(0);
+                    for(int i=0;i<=plr.componentVertices.size();i++){
+                        if(i==plr.componentVertices.size()-1) cis.add(1);
+                        else cis.add(0);
+                    }
                     for(int i=0;i<connectednessOfComponent(plr);i++){
                         cis.set(i,1);
                     }
-                    cis.set(plr.componentVertices.size()-1,1);
                     for(int i=connectednessOfComponent(plr);i<=plr.componentVertices.size()-2;i++){
+                        System.out.println("ComponentCi c: "+plr);
                         cis.set(i,ComponentCi(l,l+d,i));
                     }
+                    ciTable.get(l).get(l+d).addAll(cis);
+                    System.out.println("CITABLE: "+l+","+(l+d)+": "+ciTable.get(l).get(l+d));
                 }
-                ciTable.get(l).get(l+d).addAll(cis);
-                System.out.println("CITABLE: "+l+","+(l+d)+": "+ciTable.get(l).get(l+d));
+
             }
         }
-        //printOutCiTable();
+        printOutCiTable();
     }
 
     public void printOutCiTable(){
         System.out.println("CITABLE: ");
         for(int i=0;i<ciTable.size();i++){
-            for(int j=0;j<ciTable.get(i).size();j++){
-                System.out.println(ciTable.get(i).get(j));
+            for(int j=i;j<ciTable.get(i).size();j++){
+                System.out.print("("+i+","+j+"): "+ciTable.get(i).get(j)+"  ");
             }
+            System.out.println();
         }
     }
 }

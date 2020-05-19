@@ -11,12 +11,12 @@ public class Zones {
     public Zones(ArrayList<Point> numberLine,ArrayList<Vertex> vertices) {
         zones=new ArrayList<>();
         makeZonesFromPoints(numberLine);
-        makeZonesVertices(vertices);
+        makeZonesFromVertices(vertices);
         makeCliqueAndMinimalSeparatorZones();
         //printOutEverything();
     }
 
-    public void makeZonesVertices(ArrayList<Vertex> vertices) { //TODO: lehetne hatékonyabban 2.0, ennél is?
+    public void makeZonesFromVertices(ArrayList<Vertex> vertices) { //TODO: lehetne hatékonyabban 2.0, ennél is?
         for(Zone z:zones){
             int i=0;
             int j=0;
