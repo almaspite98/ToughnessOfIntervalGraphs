@@ -8,8 +8,13 @@ public class Vertex {
     public Line line;
     public char c;
 
-    @Override
+    /*@Override
     public String toString() {
         return String.valueOf(c);
+    }*/
+
+    @Override
+    public String toString() {
+        return line.toString();
     }
 }

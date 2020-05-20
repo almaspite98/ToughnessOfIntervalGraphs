@@ -2,8 +2,11 @@ package intervalGraph;
 
 
 import DrawingTool.Line;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 
+@NoArgsConstructor
 public class Zone {
     public float p1; //start of the zone
     public float p2; //end of the zone
@@ -43,6 +46,11 @@ public class Zone {
     @Override
     public int hashCode() {
         return zoneVertices.hashCode();
+    }
+
+    @Override
+    public String toString(){
+        return zoneVertices.toString();
     }
 
 }

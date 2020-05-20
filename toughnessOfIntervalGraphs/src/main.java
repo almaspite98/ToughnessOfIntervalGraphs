@@ -9,7 +9,7 @@ import java.util.Collections;
 import javax.swing.*;
 
 public class main {
-    public static int n = 15; //intervallumok száma
+    public static int n = 8; //intervallumok száma
     public static void main(String args[])
     {
         IntervalGraph ig=new IntervalGraph();
@@ -27,7 +27,8 @@ public class main {
         testFrame.setVisible(true);
         ig.allComponents=ig.makeAllComponents(ig.zones);
         //ig.readInPlr(ig.zones);
-
+        //int r=ig.zones.cliques.size()-1;
+        //ig.connectednessOfComponent(ig.findComponent(0,r,ig.allComponents));
         //ig.makeComponentsOfComponenets();
         //ig.makeComponentsOfComponenets();
         ig.plld(ig.zones.cliques.size());

@@ -11,4 +11,9 @@ public class Line{
     public float y2;
     public char c;
     public Color color;
+
+    @Override
+    public String toString() {
+        return x1+" "+x2;
+    }
 }
