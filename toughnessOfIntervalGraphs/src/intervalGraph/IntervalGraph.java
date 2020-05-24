@@ -6,6 +6,7 @@ import DrawingTool.Line;
 import DrawingTool.LinesComponent;
 import data.SortInput;
 import data.SortPoints;
+import data.SortSeparators;
 
 import java.awt.*;
 import java.util.*;
@@ -15,7 +16,7 @@ public class IntervalGraph {
     public ArrayList<Vertex> vertices;
     public ArrayList<Component> allComponents;
     public ArrayList<ComponentsOfComponent> allComponentsComponents;
-    ArrayList<ArrayList<ArrayList<Integer>>> ciTable;
+    public ArrayList<ArrayList<ArrayList<Integer>>> ciTable;
     //ArrayList[][] ciTable;
     public Zones zones;
     public ArrayList<Lane> lanes;
@@ -157,11 +158,37 @@ public class IntervalGraph {
         for (Lane l : lanes) l.setYToLaneVertices(y0, gap);
     }
 
+    public int maxNumberOfComponentsInLanes(){
+        int max=0;
+        for(Lane l:lanes){
+            if(l.laneVertices.size()>max) max=l.laneVertices.size();
+        }
+        return max;
+    }
+
+    public int minVerticesToBeRemovedToGainMaximumCi(){ //TODO
+        ArrayList<Zone> separators=new ArrayList<>(zones.separators);
+        separators.sort(new SortSeparators());
+        //for(Zone s:separators) System.out.println("Separator: "+s.zoneVertices);
+        Component c=findComponent(0,zones.cliques.size()-1,allComponents);
+        int db=numberOfComponents(c);
+        int minToBeRemoved=0;
+        for(Zone s:separators){
+            minToBeRemoved+=s.zoneVertices.size();
+            separators.remove(s);
+        }
+        return 0;
+    }
+
     public int findVertexALane(int vertexId) {
         for (Lane l : lanes) {
             if (l.laneVertices.get(l.laneVertices.size() - 1).line.x2 <= vertices.get(vertexId).line.x1) return l.id;
         }
         return lanes.size(); //new lane element needed
+    }
+
+    public void printOutLanes(){
+        for(Lane l:lanes) System.out.println("laneVertices: "+l.laneVertices);
     }
 
     public ArrayList<Component> makeAllComponents(Zones z) {
@@ -654,6 +681,7 @@ public class IntervalGraph {
             }
             System.out.println();
         }
+        System.out.println("MAX POSSIBLE CI: "+maxNumberOfComponentsInLanes());
         System.out.println("DONE");
     }
 }

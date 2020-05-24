@@ -15,11 +15,12 @@ import static org.junit.Assert.assertFalse;
 
 class IntervalGraphTest {
     public IntervalGraph ig;
+    public int n=15;
 
     @BeforeEach
     void setUp() {
         ig=new IntervalGraph();
-        ig.inputGenerator(15); //auto generated input
+        ig.inputGenerator(n); //auto generated input
         //ig.readInGraph();
         ig.makeLanes();
 
@@ -167,6 +168,28 @@ class IntervalGraphTest {
     }
 
     @Test
+    void maxNumberOfComponentsInLanesTest(){
+        int db=0;
+        for(int i=0;i<20;i++){
+            n=new Random().nextInt(30);
+            setUp();
+            ig.printOutLanes();
+            System.out.println("MAX POSSIBLE CI: "+ig.maxNumberOfComponentsInLanes());
+            assertEquals(ig.lanes.get(0).laneVertices.size(),ig.maxNumberOfComponentsInLanes());
+            if(ig.lanes.size()>=2){
+                if(ig.lanes.get(1).laneVertices.size()>ig.lanes.get(0).laneVertices.size()) db++;
+            }
+        }
+        System.out.println("DB: "+db);
+    }
+
+    @Test
     void plldTest() {
+        ig.plld(ig.zones.cliques.size());
+        Integer max=ig.maxNumberOfComponentsInLanes();
+        for(Integer i=ig.vertices.size()-max;i<=ig.vertices.size();i++){
+            System.out.println("index: "+i+" ertek: "+max);
+            assertEquals(max--,ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(i));
+        }
     }
 }

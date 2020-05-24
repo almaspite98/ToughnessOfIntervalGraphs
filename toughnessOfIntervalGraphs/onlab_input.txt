@@ -46,3 +46,17 @@
 44 54
 3 70
 6 53
+
+//példa arra, hogy nem feltétlen az első lane csúcspontjai maradnak a végére
+11
+5 25
+30 50
+55 75
+80 100
+17 38
+20 35
+42 63
+45 60
+67 88
+70 85
+92 110
