@@ -78,6 +78,7 @@ public class Zones {
             }
             i++;
         }
+        if(maxFind)cliques.add(zones.get(i));
     }
     public boolean isSeparator(int i){
         return zones.get(i).n < zones.get(i + 1).n;

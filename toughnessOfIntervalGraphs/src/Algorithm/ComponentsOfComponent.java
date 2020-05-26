@@ -1,5 +1,6 @@
 package Algorithm;
 
+import intervalGraph.Zone;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -16,12 +17,11 @@ public class ComponentsOfComponent {
     public Component newComponent; //ez P(l,r)\Sp
     public ArrayList<Component> componentsOfComponent;
 
-    /*public ComponentsOfComponent(int i, int p, String mark, Component component, ArrayList<Component> componentsOfComponent) {
-        this.i=i;
-        this.p=p;
-        this.mark=mark;
-        this.component=component;
-        this.componentsOfComponent=componentsOfComponent;
+    /*public ComponentsOfComponent(Component c,ArrayList<Component> ca){
+        i=0;
+        oldComponent=c;
+        newComponent=c;
+        componentsOfComponent=ca;
     }*/
 
     @Override

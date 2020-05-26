@@ -9,12 +9,14 @@ import java.util.Collections;
 import javax.swing.*;
 
 public class main {
-    public static int n = 15; //intervallumok száma
+    public static int n = 20; //intervallumok száma
     public static void main(String args[])
     {
         IntervalGraph ig=new IntervalGraph();
-        ig.inputGenerator(n); //auto generated input
-        //ig.readInGraph(); //manual input
+        //ig.inputGenerator(n); //auto generated input
+        ig.readInGraph(); //manual input
+
+
         //ig.makeZones(ig.vertices);
         ig.makeLanes();
 
