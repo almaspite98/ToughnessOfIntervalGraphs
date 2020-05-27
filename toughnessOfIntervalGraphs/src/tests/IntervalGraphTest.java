@@ -2,16 +2,13 @@ package tests;
 
 import Algorithm.Component;
 import Algorithm.ComponentsOfComponent;
-import data.SortInput;
 import intervalGraph.IntervalGraph;
-import intervalGraph.Vertex;
+import org.junit.Assert;
 import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 class IntervalGraphTest {
     public IntervalGraph ig;
@@ -174,8 +171,8 @@ class IntervalGraphTest {
             n=new Random().nextInt(30);
             setUp();
             ig.printOutLanes();
-            System.out.println("MAX POSSIBLE CI: "+ig.maxNumberOfComponentsInLanes());
-            assertEquals(ig.lanes.get(0).laneVertices.size(),ig.maxNumberOfComponentsInLanes());
+            System.out.println("MAX POSSIBLE CI: "+ig.maxNumberOfVerticesInLanes());
+            assertEquals(ig.lanes.get(0).laneVertices.size(),ig.maxNumberOfVerticesInLanes());
             if(ig.lanes.size()>=2){
                 if(ig.lanes.get(1).laneVertices.size()>ig.lanes.get(0).laneVertices.size()) db++;
             }
@@ -186,10 +183,19 @@ class IntervalGraphTest {
     @Test
     void plldTest() {
         ig.plld(ig.zones.cliques.size());
-        Integer max=ig.maxNumberOfComponentsInLanes();
+        Integer max=ig.maxNumberOfVerticesInLanes();
         for(Integer i=ig.vertices.size()-max;i<=ig.vertices.size();i++){
             System.out.println("index: "+i+" ertek: "+max);
             assertEquals(max--,ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(i));
         }
+        int minToReachMax=ig.minVerticesToBeRemovedToGainMaximumCi();
+        max=ig.maxNumberOfVerticesInLanes();
+        /*for(int i=0;i<minToReachMax;i++){
+            System.out.println("max: "+max);
+            System.out.println("ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(i): "+ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(i));
+            assertTrue(ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(i)<max);
+        }
+        System.out.println("ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(minToReachMax): "+ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(minToReachMax));
+        assertEquals(max,ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(minToReachMax));*/
     }
 }
