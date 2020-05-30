@@ -13,10 +13,9 @@ public class Zones {
         makeZonesFromPoints(numberLine);
         makeZonesFromVertices(vertices);
         makeCliqueAndMinimalSeparatorZones();
-        //printOutEverything();
     }
 
-    public void makeZonesFromVertices(ArrayList<Vertex> vertices) { //TODO: lehetne hatékonyabban 2.0, ennél is?
+    public void makeZonesFromVertices(ArrayList<Vertex> vertices) {
         for(Zone z:zones){
             int i=0;
             int j=0;
@@ -34,7 +33,7 @@ public class Zones {
     public void makeZonesFromPoints(ArrayList<Point> numberLine) {
         int i = 0;
         int n = 0;
-        while (i < numberLine.size() - 1) { //TODO határéték kezelés
+        while (i < numberLine.size() - 1) {
             float p1 = numberLine.get(i).x;
             float p2 = numberLine.get(i + 1).x;
             n += numberLine.get(i).c;

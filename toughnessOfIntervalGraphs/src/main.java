@@ -16,10 +16,6 @@ public class main {
         ig.inputGenerator(n); //auto generated input
         //ig.readInGraph(); //manual input
 
-
-
-
-        //ig.makeZones(ig.vertices);
         ig.makeLanes();
         JFrame testFrame = new JFrame();
         testFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -28,13 +24,7 @@ public class main {
         testFrame.pack();
         testFrame.setVisible(true);
         ig.allComponents=ig.makeAllComponents(ig.zones);
-        //ig.readInPlr(ig.zones);
-        //int r=ig.zones.cliques.size()-1;
-        //ig.connectednessOfComponent(ig.findComponent(0,r,ig.allComponents));
-        //ig.makeComponentsOfComponenets();
-        //ig.makeComponentsOfComponenets();
         ig.plld(ig.zones.cliques.size());
-        //ig.minVerticesToBeRemovedToGainMaximumCi();
     }
 
 }

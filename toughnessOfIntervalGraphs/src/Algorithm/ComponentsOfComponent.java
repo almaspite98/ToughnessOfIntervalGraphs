@@ -11,18 +11,10 @@ import java.util.ArrayList;
 public class ComponentsOfComponent {
     public int i; //ahány csúcsot kivettünk
     public int p; //Separator indexe
-    //int numberOfComponents ?
     public String mark;
     public Component oldComponent;
     public Component newComponent; //ez P(l,r)\Sp
     public ArrayList<Component> componentsOfComponent;
-
-    /*public ComponentsOfComponent(Component c,ArrayList<Component> ca){
-        i=0;
-        oldComponent=c;
-        newComponent=c;
-        componentsOfComponent=ca;
-    }*/
 
     @Override
     public String toString() {

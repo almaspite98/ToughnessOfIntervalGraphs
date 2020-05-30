@@ -9,14 +9,6 @@ public class LinesComponent extends JPanel{
     private final ArrayList<Line> lines = new ArrayList<>();
     public float scale=10;
 
-    /*public void addLine(float x1, float y, float x2) {
-        addLine(x1, y, x2, Color.black);
-    }*/
-
-    /*public void addLine(float x1, float y, float x2,char c, Color color) {
-        lines.add(new Line(x1, y, x2,y,c, color));
-        repaint();
-    }*/
     public void addLine(Line l) {
         lines.add(l);
         repaint();
@@ -64,7 +56,4 @@ public class LinesComponent extends JPanel{
 
         }
     }
-
-
-
 }

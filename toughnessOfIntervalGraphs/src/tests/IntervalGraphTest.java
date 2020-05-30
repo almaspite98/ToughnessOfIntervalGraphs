@@ -3,9 +3,9 @@ package tests;
 import Algorithm.Component;
 import Algorithm.ComponentsOfComponent;
 import intervalGraph.IntervalGraph;
-import org.junit.Assert;
 import org.junit.jupiter.api.*;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -18,35 +18,9 @@ class IntervalGraphTest {
     void setUp() {
         ig=new IntervalGraph();
         ig.inputGenerator(n); //auto generated input
-        //ig.readInGraph();
         ig.makeLanes();
 
         ig.allComponents=ig.makeAllComponents(ig.zones);
-    }
-
-    @AfterEach
-    void tearDown() {
-        ig=null;
-    }
-
-    @Test
-    void makeNumberLineTest() {
-    }
-
-    @Test
-    void makeZonesTest() {
-    }
-
-    @Test
-    void makeLanesTest() {
-    }
-
-    @Test
-    void findVertexALaneTest() {
-    }
-
-    @Test
-    void makeAllComponentsTest() {
     }
 
     @Test
@@ -76,28 +50,7 @@ class IntervalGraphTest {
             System.out.println("ComponentConnectedness: "+ig.connectednessOfComponent(c));
             System.out.println("Expected: "+ig.isComplete(c));
             System.out.println("Actual: "+ig.isComplete(c.componentVertices));
-            //assertEquals(ig.isComplete(c),ig.isComplete(c.componentVertices));
         }
-    }
-
-    @Test
-    void makeComponentTest() {
-    }
-
-    @Test
-    void makeComponentsOfComponenetsTest() {
-    }
-
-    /*@Test
-    void makeAllDisjunctComponentsTest() {
-        for(Component c:ig.allComponents){
-            System.out.println("Component: "+c);
-            ig.makeAllDisjunctComponents(c);
-        }
-    }*/
-
-    @Test
-    void completeComponentCiTest() {
     }
 
     @Test
@@ -144,24 +97,12 @@ class IntervalGraphTest {
         }
     }
 
-    /*@Test
+    @Test
     void numberOfComponentsTest() {
         for(Component c:ig.allComponents){
-            ArrayList<Component> components=ig.makeAllDisjunctComponents(c);
+            ArrayList<Component> components=ig.makeAllDisjunctComponents(c.componentZones.zones,ig.allComponents);
             assertEquals(components.size(),ig.numberOfComponents(c));
         }
-    }*/
-
-    @Test
-    void lemmaTest() {
-    }
-
-    @Test
-    void componentCiTest() {
-    }
-
-    @Test
-    void makeCiTableForCompleteComponentsTest() {
     }
 
     @Test
@@ -172,7 +113,7 @@ class IntervalGraphTest {
             setUp();
             ig.printOutLanes();
             System.out.println("MAX POSSIBLE CI: "+ig.maxNumberOfVerticesInLanes());
-            assertEquals(ig.lanes.get(0).laneVertices.size(),ig.maxNumberOfVerticesInLanes());
+            if(ig.lanes.size()>0)assertEquals(ig.lanes.get(0).laneVertices.size(),ig.maxNumberOfVerticesInLanes());
             if(ig.lanes.size()>=2){
                 if(ig.lanes.get(1).laneVertices.size()>ig.lanes.get(0).laneVertices.size()) db++;
             }
@@ -188,14 +129,5 @@ class IntervalGraphTest {
             System.out.println("index: "+i+" ertek: "+max);
             assertEquals(max--,ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(i));
         }
-        int minToReachMax=ig.minVerticesToBeRemovedToGainMaximumCi();
-        max=ig.maxNumberOfVerticesInLanes();
-        /*for(int i=0;i<minToReachMax;i++){
-            System.out.println("max: "+max);
-            System.out.println("ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(i): "+ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(i));
-            assertTrue(ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(i)<max);
-        }
-        System.out.println("ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(minToReachMax): "+ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(minToReachMax));
-        assertEquals(max,ig.ciTable.get(0).get(ig.zones.cliques.size()-1).get(minToReachMax));*/
     }
 }

@@ -12,13 +12,7 @@ public class Component {
     public int l;
     public int r;
     public String mark;
-    /*public Component(ArrayList<Vertex> v,Zones cz,int l, int r,String empty){
-        componentVertices=v;
-        componentZones=cz;
-        this.l=l;
-        this.r=r;
-        mark=empty;
-    }*/
+
     @Override
     public String toString() {
         return "("+l+","+r+") "+componentVertices+" "+mark;
